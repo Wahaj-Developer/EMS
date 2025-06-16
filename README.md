@@ -1,12 +1,38 @@
-# React + Vite
+# Analysis of Original Auth Implementation
+What Worked:
+✅ Basic context provider structure
+✅ Initial localStorage data loading
+✅ Employee/admin role separation
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Key Limitations:
 
-Currently, two official plugins are available:
+State Mutation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Directly modified userData arrays/objects (e.g., elem.tasks.push()), breaking React’s immutability requirements.
 
-## Expanding the ESLint configuration
+Sync Issues
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Changes in one tab/window didn’t reflect in others due to missing storage event listeners.
+
+Error-Prone Edge Cases
+
+Crashed if:
+
+localStorage was empty/corrupted
+
+taskStats or tasks were undefined
+
+Employee names had case mismatches (firstname vs firstName)
+
+WebSocket Errors
+
+React DevTools threw errors because:
+
+Circular references in context values
+
+Overly broad storage event handling
+
+# Impact:
+🔴 Tasks created by admins didn’t reliably appear in employee dashboards
+🔴 Required page refreshes to see updates
+🔴 Debugging difficulties due to silent failures
